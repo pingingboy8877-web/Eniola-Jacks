@@ -38,6 +38,7 @@ function App(){
   const [menu,setMenu]=useState(false);
   const [loaded,setLoaded]=useState(false);
   const [active,setActive]=useState(0);
+  const [workOpen,setWorkOpen]=useState(null);
   const cursor=useRef(null);
   const cursorRing=useRef(null);
   const raf=useRef(0);
@@ -76,6 +77,18 @@ function App(){
   useEffect(()=>{
     if(menu) document.body.classList.add("menu-open"); else document.body.classList.remove("menu-open");
   },[menu]);
+  useEffect(()=>{
+    const onKey=e=>{
+      if(workOpen===null) return;
+      if(e.key==="Escape") setWorkOpen(null);
+      if(e.key==="ArrowRight") setWorkOpen(i=>(i+1)%WORK.length);
+      if(e.key==="ArrowLeft") setWorkOpen(i=>(i-1+WORK.length)%WORK.length);
+    };
+    addEventListener("keydown",onKey);
+    return()=>removeEventListener("keydown",onKey);
+  },[workOpen]);
+
+
 
   const close=()=>setMenu(false);
 
@@ -113,15 +126,26 @@ function App(){
           </div>
         </div>
         <div className="hero-image-wrap" data-reveal>
-          <div className="hero-image"><img src={IMAGES[0]} alt="Portrait" /></div>
-          <span className="image-caption">PORTRAIT / 01</span>
+          <div className="hero-image-reel">
+            {IMAGES.map((image,i)=><div className="hero-frame" key={image} style={{"--frame":i}}><img src={image} alt={i===0 ? "Eniola Jack portrait" : "Acting portrait"} /></div>)}
+          </div>
+          <span className="image-caption">PORTRAIT REEL / 01—04</span>
+          <div className="reel-progress"><i/><i/><i/><i/></div>
         </div>
         <div className="scroll-cue"><span>SCROLL</span><i/></div>
       </section>
 
+      <section className="industry-strip" aria-label="Selected platforms and broadcasters">
+        <div className="industry-label">ON SCREEN / SELECTED PLATFORMS</div>
+        <div className="industry-track">
+          <span>NETFLIX</span><span>PRIME VIDEO</span><span>CBS</span><span>BBC</span><span>HBO</span><span>SHOWTIME</span>
+          <span>NETFLIX</span><span>PRIME VIDEO</span><span>CBS</span><span>BBC</span><span>HBO</span><span>SHOWTIME</span>
+        </div>
+      </section>
+
       <section className="manifesto" data-reveal>
         <div className="manifesto-kicker">THE PRACTICE</div>
-        <p className="manifesto-text">A performance is not simply <i>seen.</i><br/><strong>It is felt.</strong></p>
+        <p className="manifesto-text"><span data-reveal>A performance is not simply</span> <i data-reveal>seen.</i><br/><strong data-reveal>It is felt.</strong></p>
         <div className="manifesto-orb"/>
       </section>
 
@@ -129,16 +153,36 @@ function App(){
         <div className="section-head" data-reveal><span>Selected work</span><small>Film · Television · Stage</small></div>
         <div className="work-intro" data-reveal><h2>Roles that<br/><i>leave a trace.</i></h2><p>Selected screen work and creative collaborations.</p></div>
         <div className="work-rail">
-          {WORK.map((item,i)=><article className={`work-card card-${i}`} key={item.title} data-reveal>
+          {WORK.map((item,i)=><button className={`work-card card-${i}`} key={item.title} data-reveal onClick={()=>setWorkOpen(i)}>
             <div className="work-media"><img src={item.image} alt="" loading="lazy"/><div className="media-shine"/></div>
             <div className="work-meta"><span>{item.type}</span><span>{item.year}</span></div>
-            <h3>{item.title}</h3><a href="#contact" aria-label={`Enquire about ${item.title}`}>View role <b>↗</b></a>
-          </article>)}
+            <h3>{item.title}</h3><span className="work-action">Open role <b>↗</b></span>
+          </button>)}
+        </div>
+        <div className="work-next" data-reveal>
+          <button onClick={()=>setWorkOpen(0)}><span>OPEN THE REEL</span><b>↘</b></button>
+          <p>Tap a role. The next story is waiting inside.</p>
         </div>
       </section>
 
+      {workOpen!==null && <div className="work-modal" role="dialog" aria-modal="true" aria-label={WORK[workOpen].title}>
+        <div className="modal-backdrop" onClick={()=>setWorkOpen(null)}/>
+        <div className="modal-panel">
+          <div className="modal-image"><img src={WORK[workOpen].image} alt="" /></div>
+          <div className="modal-copy">
+            <span>{String(workOpen+1).padStart(2,"0")} / {String(WORK.length).padStart(2,"0")}</span>
+            <h2>{WORK[workOpen].title}</h2>
+            <p>{WORK[workOpen].type} · {WORK[workOpen].year}</p>
+            <div className="modal-actions">
+              <button onClick={()=>setWorkOpen((workOpen+1)%WORK.length)}>NEXT STORY <b>↗</b></button>
+              <button onClick={()=>setWorkOpen(null)}>CLOSE <b>×</b></button>
+            </div>
+          </div>
+        </div>
+      </div>}
+
       <section id="about" className="about">
-        <div className="about-image" data-reveal><img src={IMAGES[0]} alt="Eniola Jack portrait" loading="lazy"/><span>ENIOLA / JACK</span></div>
+        <div className="about-image" data-reveal><img src={IMAGES[2]} alt="Eniola Jack portrait" loading="lazy"/><span>ENIOLA / JACK</span></div>
         <div className="about-copy">
           <div className="section-head" data-reveal><span>About</span><small>Presence over performance</small></div>
           <h2 data-reveal>There is a<br/><i>world</i> inside<br/>every role.</h2>
