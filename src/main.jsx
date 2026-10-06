@@ -194,9 +194,22 @@ function App(){
       <section className="marquee" aria-hidden="true"><div>ACTING · STORY · CHARACTER · PRESENCE · ACTING · STORY · CHARACTER · PRESENCE · </div></section>
 
       <section id="press" className="press">
-        <div className="section-head" data-reveal><span>Press & credits</span><small>Selected appearances</small></div>
+        <div className="section-head" data-reveal><span>Press</span><small>Editorial concept archive</small></div>
+        <div className="press-intro" data-reveal>
+          <h2>Written in<br/><i>the frame.</i></h2>
+          <p>Selected editorial-style stories created for this portfolio concept. These are <strong>fictional demo press pieces</strong>, not real publications or verified coverage.</p>
+        </div>
         <div className="press-grid">
-          {["Screen work","Creative collaborations","Interviews & press","Representation"].map((x,i)=><a href="#contact" data-reveal key={x}><span>{x}</span><b>↗</b><i>0{i+1}</i></a>)}
+          {[
+            {pub:"THE FRAME REVIEW",title:"The quiet power of a performer who knows when not to speak.",date:"OCT 2026"},
+            {pub:"SCREEN CULTURE",title:"Inside the new generation of screen presence.",date:"SEP 2026"},
+            {pub:"NORTH LONDON ARTS",title:"Character, rhythm and the architecture of a scene.",date:"AUG 2026"},
+            {pub:"THE ACTOR'S EDIT",title:"Five minutes with an actor building worlds from silence.",date:"JUL 2026"}
+          ].map((x,i)=><a href="#contact" data-reveal key={x.pub}>
+            <span className="press-number">0{i+1}</span>
+            <div><small>{x.pub} · {x.date}</small><strong>{x.title}</strong><em>FICTIONAL DEMO</em></div>
+            <b>↗</b>
+          </a>)}
         </div>
       </section>
 
